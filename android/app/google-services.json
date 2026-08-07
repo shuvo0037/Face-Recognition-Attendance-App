@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "20424580808",
+    "project_id": "sust-face-attendance-app",
+    "storage_bucket": "sust-face-attendance-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:20424580808:android:294f900b7358740023cffd",
+        "android_client_info": {
+          "package_name": "com.example.attendance_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBwYhB04l0OYQLHv75O0FQFR5gzQtEZ83I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
