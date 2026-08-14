@@ -150,14 +150,14 @@ Widget build(BuildContext context){
           buildButton(
             "Start Attendance Session",
             Icons.play_circle_fill,
-            Colors.red,
+            Colors.blueGrey,
             startSession,
           ),
           const SizedBox(height:15),
           buildButton(
             "Register Student",
             Icons.person_add,
-            Colors.green,
+            Colors.blueGrey,
                 (){
               Navigator.push(
                 context,
@@ -171,7 +171,7 @@ Widget build(BuildContext context){
           buildButton(
             "Student List",
             Icons.people,
-            Colors.purple,
+            Colors.blueGrey,
                 (){
               Navigator.push(
                 context,
@@ -185,7 +185,7 @@ Widget build(BuildContext context){
           buildButton(
             "Attendance History",
             Icons.history,
-            Colors.orange,
+            Colors.blueGrey,
                 (){
               Navigator.push(
                 context,
