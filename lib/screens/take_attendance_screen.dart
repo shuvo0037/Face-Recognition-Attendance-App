@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 
@@ -8,403 +7,136 @@ import '../services/face_detector_service.dart';
 
 
 class TakeAttendanceScreen extends StatefulWidget {
-
-  const TakeAttendanceScreen({
-    super.key,
-  });
-
+  const TakeAttendanceScreen({super.key});
 
   @override
-  State<TakeAttendanceScreen> createState() =>
-      _TakeAttendanceScreenState();
-
+  State<TakeAttendanceScreen> createState() => _TakeAttendanceScreenState();
 }
 
+class _TakeAttendanceScreenState extends State<TakeAttendanceScreen> {
+  final CameraService cameraService = CameraService();
 
-
-class _TakeAttendanceScreenState
-    extends State<TakeAttendanceScreen> {
-
-
-  final CameraService cameraService =
-  CameraService();
-
-
-  final FaceDetectorService faceService =
-  FaceDetectorService();
-
-
+  final FaceDetectorService faceService = FaceDetectorService();
 
   File? capturedImage;
 
   bool isLoading = false;
 
-
-
   @override
-  void initState(){
-
+  void initState() {
     super.initState();
 
     initialize();
-
   }
-
-
 
   Future<void> initialize() async {
-
     await cameraService.initializeCamera();
 
-
-    if(mounted){
-
+    if (mounted) {
       setState(() {});
-
     }
-
   }
-
-
-
-
 
   Future<void> captureFace() async {
+    final image = await cameraService.captureImage();
 
-
-    final image =
-    await cameraService.captureImage();
-
-
-    if(image != null){
-
-      setState((){
-
+    if (image != null) {
+      setState(() {
         capturedImage = image;
-
       });
-
     }
-
   }
-
-
-
-
 
   Future<void> verifyFace() async {
-
-
-    if(capturedImage == null){
-
-
-      ScaffoldMessenger.of(context)
-          .showSnackBar(
-
-        const SnackBar(
-
-          content:
-          Text(
-              "Capture face first"
-          ),
-
-        ),
-
-      );
-
+    if (capturedImage == null) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text("Capture face first")));
 
       return;
-
     }
 
-
-
-    setState((){
-
+    setState(() {
       isLoading = true;
-
     });
 
+    final result = await faceService.verifyFace(capturedImage!);
 
+    if (!mounted) return;
 
-    final result =
-    await faceService.verifyFace(
-      capturedImage!,
-    );
-
-
-
-    if(!mounted) return;
-
-
-
-    setState((){
-
+    setState(() {
       isLoading = false;
-
     });
 
+    final matched = result['match'] == true;
 
-
-    final matched =
-        result['match'] == true;
-
-
-
-    if(matched){
-
-
-      ScaffoldMessenger.of(context)
-          .showSnackBar(
-
-        const SnackBar(
-
-          content:
-          Text(
-              "Face Verified ✅"
-          ),
-
-        ),
-
-      );
-
-
-
-      Navigator.pop(
+    if (matched) {
+      ScaffoldMessenger.of(
         context,
-        true,
-      );
+      ).showSnackBar(const SnackBar(content: Text("Face Verified ✅")));
 
-
-
+      Navigator.pop(context, true);
+    } else {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text("Face Not Matched ❌")));
     }
-
-    else{
-
-
-      ScaffoldMessenger.of(context)
-          .showSnackBar(
-
-        const SnackBar(
-
-          content:
-          Text(
-              "Face Not Matched ❌"
-          ),
-
-        ),
-
-      );
-
-
-    }
-
-
   }
 
-
-
-
-
   @override
-  void dispose(){
-
+  void dispose() {
     cameraService.dispose();
 
     super.dispose();
-
   }
-
-
-
-
 
   @override
-  Widget build(BuildContext context){
-
-
-    final controller =
-        cameraService.controller;
-
-
+  Widget build(BuildContext context) {
+    final controller = cameraService.controller;
 
     return Scaffold(
+      appBar: AppBar(title: const Text("Face Verification")),
 
-
-      appBar:
-      AppBar(
-
-        title:
-        const Text(
-            "Face Verification"
-        ),
-
-      ),
-
-
-
-      body:
-
-      Column(
-
-
-        children:[
-
-
-
+      body: Column(
+        children: [
           Expanded(
-
-
-            child:
-
-            controller != null &&
-                controller.value.isInitialized
-
-
-                ?
-
-            CameraPreview(
-              controller,
-            )
-
-
-                :
-
-            const Center(
-
-              child:
-              CircularProgressIndicator(),
-
-            ),
-
-
+            child: controller != null && controller.value.isInitialized
+                ? CameraPreview(controller)
+                : const Center(child: CircularProgressIndicator()),
           ),
 
-
-
-
-
-          if(capturedImage != null)
-
-
+          if (capturedImage != null)
             const Padding(
+              padding: EdgeInsets.all(10),
 
-              padding:
-              EdgeInsets.all(10),
-
-
-              child:
-              Text(
-                "Face Captured",
-                style:
-                TextStyle(
-                  fontSize:18,
-                ),
-              ),
-
+              child: Text("Face Captured", style: TextStyle(fontSize: 18)),
             ),
-
-
-
-
-
 
           Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
 
-
-            mainAxisAlignment:
-            MainAxisAlignment.spaceEvenly,
-
-
-
-            children:[
-
-
-
+            children: [
               ElevatedButton(
+                onPressed: captureFace,
 
-
-                onPressed:
-                captureFace,
-
-
-                child:
-                const Text(
-                    "Capture"
-                ),
-
-
+                child: const Text("Capture"),
               ),
 
-
-
-
-
               ElevatedButton(
+                onPressed: isLoading ? null : verifyFace,
 
-
-                onPressed:
-                isLoading
-                    ?
-                null
-                    :
-                verifyFace,
-
-
-
-                child:
-
-
-                isLoading
-
-
-                    ?
-
-                const SizedBox(
-
-                  height:20,
-
-                  width:20,
-
-
-                  child:
-                  CircularProgressIndicator(),
-
-                )
-
-
-                    :
-
-                const Text(
-                    "Verify"
-                ),
-
-
+                child: isLoading
+                    ? const SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(),
+                      )
+                    : const Text("Verify"),
               ),
-
-
-
             ],
-
-          ),
-
-
-
-          const SizedBox(
-            height:20,
-          ),
-
-
+          ), const SizedBox(height: 20),
         ],
-
-
       ),
-
-
     );
-
-
   }
-
-
 }
