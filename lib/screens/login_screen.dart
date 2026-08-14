@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../services/auth_service.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -117,7 +116,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       controller: _emailController,
                       keyboardType: TextInputType.emailAddress,
                       decoration: const InputDecoration(
-                        labelText: 'University email',
+                        labelText: 'E-mail',
                         border: OutlineInputBorder(),
                       ),
                       validator: (v) =>
